@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tuition Fee Status Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
+  
+  /* Image Matte Dark Background */
+  body{background:#18191a;padding:15px;color:#e4e6eb}
+  .container{max-width:1400px;margin:auto}
+  
+  /* Dark Header Section */
+  .header{background:#242526;color:#fff;padding:24px;border-radius:16px;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,0.3);border:1px solid #3a3b3c}
+  .header h1{font-size:clamp(22px,4vw,34px);font-weight:600;letter-spacing:0.5px}
+  .header p{margin-top:6px;color:#b0b3b8;font-size:15px}
+  
+  /* Stats Cards - Sleek Dark Layout */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin:15px 0}
+  .card{background:#242526;border-radius:14px;padding:20px;box-shadow:0 4px 10px rgba(0,0,0,0.2);border:1px solid #3a3b3c}
+  .card h3{font-size:14px;color:#b0b3b8;font-weight:400}
+  .value{font-size:28px;font-weight:700;margin-top:8px;color:#4599ff}
+  
+  /* Premium Gold Top Performer Card as shown in image */
+  .top-card{background:#242526;border:1px solid #f59e0b!important;box-shadow:0 0 10px rgba(245,158,11,0.15)}
+  .top-card h3{color:#f59e0b}
+  #topPerformer{color:#fff}
+  
+  /* Table Layout Design */
+  .table-wrap{background:#242526;border-radius:14px;padding:15px;overflow:auto;box-shadow:0 4px 12px rgba(0,0,0,0.2);border:1px solid #3a3b3c}
+  table{width:100%;border-collapse:collapse;min-width:auto}
+  th,td{border:1px solid #3a3b3c;padding:10px 12px;text-align:center;font-size:13px;color:#e4e6eb}
+  
+  /* Table Header */
+  th{background:#1c1d1e;color:#fff;position:sticky;top:0;font-size:13px;font-weight:600}
+  tbody tr:nth-child(even){background:#1c1d1e}
+  tbody tr:hover{background:#3a3b3c}
+  
+  .rank1{background:rgba(245,158,11,0.05)!important}
+  .excluded{opacity:0.4;background:#18191a!important}
+  
+  /* Grand Total row styling */
+  tfoot tr{background:#1c1d1e;font-weight:700;color:#4599ff}
+  tfoot td{border-top:2px solid #3a3b3c}
+  
+  /* Glowing Translucent Badges */
+  .badge{padding:4px 10px;border-radius:6px;color:#fff;font-size:11px;display:inline-block;min-width:60px;font-weight:600}
+  .g{background:rgba(34,197,94,0.2);color:#4ade80;border:1px solid rgba(34,197,94,0.4)}
+  .o{background:rgba(245,158,11,0.2);color:#fbbf24;border:1px solid rgba(245,158,11,0.4)}
+  .r{background:rgba(239,68,68,0.2);color:#f87171;border:1px solid rgba(239,68,68,0.4)}
+  
+  .footer{text-align:center;margin-top:20px;color:#b0b3b8;font-size:13px}
+  .last-update{font-size:12px;color:#747679;margin-top:4px}
+  
+  /* Vibrant Interactive Links */
+  .clickable{color:#4599ff;cursor:pointer;text-decoration:underline;font-weight:500}
+  .clickable:hover{color:#2e82ff}
+  .student-name{color:#4599ff;cursor:pointer;text-decoration:underline;font-weight:500}
+  .student-name:hover{color:#2e82ff}
+
+  /* Modal Dark Styles */
+  .modal{display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);overflow:auto}
+  .modal-content{background:#242526;margin:2% auto;padding:25px;border-radius:16px;width:95%;max-width:1200px;max-height:90vh;overflow:auto;box-shadow:0 10px 30px rgba(0,0,0,0.5);border:1px solid #3a3b3c}
+  .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid #3a3b3c}
+  .modal-header h2{color:#fff;font-size:22px;font-weight:600}
+  
+  .close-btn{background:#ef4444;color:#fff;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500}
+  .close-btn:hover{background:#dc2626}
+  
+  /* Image Style Bright Blue Buttons */
+  .btn-group{display:flex;gap:10px;margin:15px 0}
+  .btn{background:#1877f2;color:#fff;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500;transition:background 0.2s}
+  .btn:hover{background:#166fe5}
+  .btn-print{background:#242526;color:#e4e6eb;border:1px solid #3a3b3c}
+  .btn-print:hover{background:#3a3b3c}
+  
+  .sort-icons{display:inline-flex;flex-direction:column;margin-left:5px;vertical-align:middle}
+  .sort-icons span{cursor:pointer;font-size:9px;line-height:7px;color:#747679}
+  .sort-icons span:hover{color:#4599ff}
+
+  @media print{
+    *{color:#000!important;background:transparent!important;box-shadow:none!important}
+    .container,.header,.cards,.top-card,.footer{display:none!important}
+    .modal{display:none!important}
+    .modal.printing{display:block!important;position:static!important}
+    .btn-group,.close-btn,.sort-icons{display:none!important}
+    .modal-content{margin:0!important;width:100%!important;max-width:100%!important;padding:10px!important;max-height:none!important;border:none!important}
+    body{background:#fff!important;padding:0!important}
+    table{font-size:11px!important}
+    th,td{padding:4px 5px!important;font-size:11px!important;border:1px solid #000!important;color:#000!important}
+    th{background:#e5e7eb!important}
+    .badge{border:1px solid #000!important;color:#000!important}
+    .student-name,.clickable{text-decoration:none!important;color:#000!important}
+    .modal-header{border-bottom:1px solid #000!important}
+  }
+  @media(max-width:768px){
+    th,td{padding:6px 8px;font-size:12px}
+    .value{font-size:22px}
+    .modal-content{width:98%;margin:1% auto;padding:15px}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>UCEP Robertsongonj Technical School</h1>
+    <p>Tuition Fee Status Dashboard</p>
+  </div>
+
+  <div class="cards">
+    <div class="card"><h3>Total Target</h3><div class="value" id="tt">0</div></div>
+    <div class="card"><h3>Total Achievement</h3><div class="value" id="ta">0</div></div>
+    <div class="card"><h3>Total Due</h3><div class="value" id="td">0</div></div>
+    <div class="card"><h3>Achievement %</h3><div class="value" id="tp">0%</div></div>
+  </div>
+
+  <div class="card top-card" style="margin-bottom:15px">
+    <h3>🏆 Top Performer</h3>
+    <div id="topPerformer" style="font-size:18px; margin-top:5px; font-weight:600;">Loading...</div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Sl. No.</th>
+          <th>Class & Shift</th>
+          <th>Instructor's Name</th>
+          <th>Target</th>
+          <th>Achievement</th>
+          <th>Due</th>
+          <th>% Achievement</th>
+          <th>Rank</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+      <tfoot id="tfoot"></tfoot>
+    </table>
+  </div>
+
+  <div class="footer">
+    🔄 Auto Refreshing Every 10 Seconds
+    <div class="last-update" id="lastUpdate"></div>
+  </div>
+</div>
+
+<div id="classModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modalClassTitle">Class Details</h2>
+      <button class="close-btn" onclick="closeClassModal()">✕ Close</button>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-print" onclick="printModal('classModal')">🖨️ Print</button>
+      <button class="btn" onclick="closeClassModal()">← Back</button>
+    </div>
+    <div class="table-wrap">
+      <table id="studentTable">
+        <thead>
+          <tr>
+            <th>Sl.</th>
+            <th>Roll
+              <span class="sort-icons">
+                <span onclick="sortStudents('roll','desc')">▲</span>
+                <span onclick="sortStudents('roll','asc')">▼</span>
+              </span>
+            </th>
+            <th>Name</th>
+            <th>Target
+              <span class="sort-icons">
+                <span onclick="sortStudents('target','desc')">▲</span>
+                <span onclick="sortStudents('target','asc')">▼</span>
+              </span>
+            </th>
+            <th>Received
+              <span class="sort-icons">
+                <span onclick="sortStudents('received','desc')">▲</span>
+                <span onclick="sortStudents('received','asc')">▼</span>
+              </span>
+            </th>
+            <th>Due
+              <span class="sort-icons">
+                <span onclick="sortStudents('due','desc')">▲</span>
+                <span onclick="sortStudents('due','asc')">▼</span>
+              </span>
+            </th>
+          </tr>
+        </thead>
+        <tbody id="studentTbody"></tbody>
+        <tfoot id="studentTfoot"></tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="paymentModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Student Payment Received Information</h2>
+      <button class="close-btn" onclick="closePaymentModal()">✕ Close</button>
+    </div>
+    <div style="margin-bottom:15px;padding:15px;background:#1c1d1e;border-radius:10px;border:1px solid #3a3b3c">
+      <p style="font-size:15px;margin-bottom:5px"><b>Name:</b> <span id="payStudentName" style="color:#4599ff;font-weight:600;"></span></p>
+      <p style="font-size:15px"><b>Roll:</b> <span id="payStudentRoll" style="color:#4599ff;font-weight:600;"></span></p>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-print" onclick="printModal('paymentModal')">🖨️ Print</button>
+      <button class="btn" onclick="closePaymentModal()">← Back</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Money Receipt No.</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody id="paymentTbody"></tbody>
+        <tfoot id="paymentTfoot"></tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+const BASE_API_URL = "https://script.google.com/macros/s/AKfycbybyBPQ4Pkdgp_cNLYPEn-eR-8rrSqyn0GZQM_u-iOyK1yuzZPNoHvL_2OFZD3utE4A/exec";
+let currentClassData = [];
+let currentClassShift = '';
+
+async function loadData(){
+ try{
+  const res = await fetch(`${BASE_API_URL}?_=${new Date().getTime()}`);
+  const json = await res.json();
+  const data = json.rows || [];
+  const top = json.topPerformer;
+
+  const tbody = document.getElementById("tbody");
+  const tfoot = document.getElementById("tfoot");
+  tbody.innerHTML = "";
+
+  let totalTarget = 0, totalAchievement = 0, totalDue = 0;
+
+  if(top){
+    document.getElementById("topPerformer").innerHTML =
+    `👑 <b style="color:#f59e0b;">${top.instructor || 'N/A'}</b> (${top.classShift}) - <span style="color:#4ade80; font-weight:700;">${Number(top.percent).toFixed(2)}%</span>`;
+  } else {
+    document.getElementById("topPerformer").innerText = "No data available";
+  }
+
+  data.forEach((r, index) => {
+    totalTarget += Number(r.target || 0);
+    totalAchievement += Number(r.achievement || 0);
+    totalDue += Number(r.due || 0);
+
+    let cls = "r";
+    if(r.percent >= 90) cls = "g";
+    else if(r.percent >= 70) cls = "o";
+
+    const isExcluded = r.rank === "-" || r.isExcluded === true;
+
+    tbody.innerHTML += `
+    <tr class="${r.rank === 1? 'rank1' : ''} ${isExcluded? 'excluded' : ''}">
+      <td>${index + 1}</td>
+      <td><span class="clickable" onclick="openClassDetails('${r.classShift}')">${r.classShift}</span></td>
+      <td>${r.rank === 1? '👑 ' : ''}${r.instructor || '-'}</td>
+      <td>${Number(r.target).toLocaleString()}</td>
+      <td>${Number(r.achievement).toLocaleString()}</td>
+      <td>${Number(r.due).toLocaleString()}</td>
+      <td><span class="badge ${cls}">${Number(r.percent).toFixed(2)}%</span></td>
+      <td><b style="${r.rank === 1? 'color:#f59e0b; font-size:16px;' : ''}">${r.rank}</b></td>
+    </tr>`;
+  });
+
+  const grandPercent = totalTarget? ((totalAchievement / totalTarget) * 100).toFixed(2) : "0.00";
+  document.getElementById("tt").innerText = totalTarget.toLocaleString();
+  document.getElementById("ta").innerText = totalAchievement.toLocaleString();
+  document.getElementById("td").innerText = totalDue.toLocaleString();
+  document.getElementById("tp").innerText = grandPercent + "%";
+
+  tfoot.innerHTML = `
+  <tr>
+    <td colspan="3">GRAND TOTAL</td>
+    <td>${totalTarget.toLocaleString()}</td>
+    <td>${totalAchievement.toLocaleString()}</td>
+    <td>${totalDue.toLocaleString()}</td>
+    <td>${grandPercent}%</td>
+    <td></td>
+  </tr>`;
+
+  if(json.lastUpdated){
+    document.getElementById("lastUpdate").innerText = `Last Updated: ${json.lastUpdated}`;
+  }
+ } catch(e) {
+   console.error(e);
+   document.getElementById("topPerformer").innerText = "Failed to load data. Retrying...";
+ }
+}
+
+async function openClassDetails(classShift){
+  currentClassShift = classShift;
+  document.getElementById('modalClassTitle').innerText = `Class: ${classShift}`;
+  document.getElementById('classModal').style.display = 'block';
+
+  const res = await fetch(`${BASE_API_URL}?action=getClassDetails&classShift=${encodeURIComponent(classShift)}`);
+  const json = await res.json();
+  currentClassData = json.students || [];
+  renderStudentTable();
+}
+
+function renderStudentTable(){
+  const tbody = document.getElementById('studentTbody');
+  const tfoot = document.getElementById('studentTfoot');
+  tbody.innerHTML = '';
+
+  let totalTarget = 0, totalReceived = 0, totalDue = 0;
+
+  currentClassData.forEach((s, i) => {
+    totalTarget += s.target;
+    totalReceived += s.received;
+    totalDue += s.due;
+
+    tbody.innerHTML += `
+    <tr>
+      <td>${i + 1}</td>
+      <td>${s.roll}</td>
+      <td><span class="student-name" onclick="openPaymentDetails('${s.roll}','${s.name.replace(/'/g, "\\'")}')">${s.name}</span></td>
+      <td>${s.target.toLocaleString()}</td>
+      <td>${s.received.toLocaleString()}</td>
+      <td>${s.due.toLocaleString()}</td>
+    </tr>`;
+  });
+
+  tfoot.innerHTML = `
+  <tr>
+    <td colspan="3">GRAND TOTAL</td>
+    <td>${totalTarget.toLocaleString()}</td>
+    <td>${totalReceived.toLocaleString()}</td>
+    <td>${totalDue.toLocaleString()}</td>
+  </tr>`;
+}
+
+function sortStudents(field, order){
+  currentClassData.sort((a, b) => {
+    let valA = a[field], valB = b[field];
+    if(field === 'roll') {
+      valA = Number(valA) || 0;
+      valB = Number(valB) || 0;
+    }
+    return order === 'asc'? valA - valB : valB - valA;
+  });
+  renderStudentTable();
+}
+
+function closeClassModal(){
+  document.getElementById('classModal').style.display = 'none';
+  document.getElementById('classModal').classList.remove('printing');
+}
+
+async function openPaymentDetails(roll, name){
+  document.getElementById('payStudentName').innerText = name;
+  document.getElementById('payStudentRoll').innerText = roll;
+  document.getElementById('paymentModal').style.display = 'block';
+
+  const res = await fetch(`${BASE_API_URL}?action=getStudentPayment&classShift=${encodeURIComponent(currentClassShift)}&roll=${encodeURIComponent(roll)}`);
+  const json = await res.json();
+
+  const tbody = document.getElementById('paymentTbody');
+  const tfoot = document.getElementById('paymentTfoot');
+  tbody.innerHTML = '';
+
+  let totalAmount = 0;
+  json.payments.forEach(p => {
+    totalAmount += p.amount;
+    tbody.innerHTML += `
+    <tr>
+      <td>${p.date}</td>
+      <td>${p.receiptNo}</td>
+      <td>${p.amount.toLocaleString()}</td>
+    </tr>`;
+  });
+
+  tfoot.innerHTML = `
+  <tr>
+    <td colspan="2">GRAND TOTAL</td>
+    <td>${totalAmount.toLocaleString()}</td>
+  </tr>`;
+}
+
+function closePaymentModal(){
+  document.getElementById('paymentModal').style.display = 'none';
+  document.getElementById('paymentModal').classList.remove('printing');
+}
+
+function printModal(modalId){
+  const modal = document.getElementById(modalId);
+  modal.classList.add('printing');
+  window.print();
+  setTimeout(() => {
+    modal.classList.remove('printing');
+  }, 500);
+}
+
+window.onclick = function(event) {
+  if (event.target.classList.contains('modal')) {
+    event.target.style.display = 'none';
+    event.target.classList.remove('printing');
+  }
+}
+
+loadData();
+setInterval(loadData, 10000);
+</script>
+</body>
+</html>
