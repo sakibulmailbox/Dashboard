@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tuition Fee Status Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght=400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
 body{background:#f4f3ef;padding:20px;color:#222222} 
@@ -14,10 +14,11 @@ body{background:#f4f3ef;padding:20px;color:#222222}
 .header h1{font-size:36px;font-weight:700;letter-spacing:0.5px}
 .header p{margin-top:6px;color:#666666;font-size:18px;font-weight:500}
 
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin:20px 0}
+/* রেসপন্সিভ গ্রিড লেআউট */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin:20px 0}
 .card{border-radius:16px;padding:25px;box-shadow:0 4px 12px rgba(0,0,0,0.06);text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center}
-.card h3{font-size:18px;font-weight:600;margin-bottom:8px;color:#222222;text-transform:uppercase}
-.value{font-size:36px;font-weight:700;color:#222222}
+.card h3{font-size:16px;font-weight:600;margin-bottom:8px;color:#222222;text-transform:uppercase}
+.value{font-size:32px;font-weight:700;color:#222222}
 
 .card.target{background:#fcd34d;border:2px solid #f59e0b} 
 .card.achievement{background:#4ade80;border:2px solid #22c55e} 
@@ -30,17 +31,18 @@ body{background:#f4f3ef;padding:20px;color:#222222}
 
 .top-performer-container{display:flex;justify-content:center;margin:20px 0}
 .top-card{background:linear-gradient(135deg, #1e3a8a, #3b82f6);border-radius:16px;padding:30px;box-shadow:0 10px 25px rgba(59,130,246,0.25);color:#ffffff;text-align:center;width:100%;max-width:700px;border:none}
-.top-card h3{font-size:20px;letter-spacing:1px;color:#fef08a;font-weight:600;margin-bottom:10px}
-#topPerformer{font-size:26px;font-weight:700}
+.top-card h3{font-size:18px;letter-spacing:1px;color:#fef08a;font-weight:600;margin-bottom:10px}
+#topPerformer{font-size:24px;font-weight:700}
 
-.table-wrap{background:#ffffff;border-radius:16px;padding:20px;overflow:auto;box-shadow:0 4px 15px rgba(0,0,0,0.05);border:1px solid #dcdcdc;margin-bottom:20px}
+/* টেবিল স্ক্রোল সমস্যা সমাধানের জন্য রেসপন্সিভ র‍্যাপার */
+.table-wrap{background:#ffffff;border-radius:16px;padding:20px;overflow-x:auto;box-shadow:0 4px 15px rgba(0,0,0,0.05);border:1px solid #dcdcdc;margin-bottom:20px;width:100%}
 table{width:100%;border-collapse:collapse;white-space:nowrap} 
-th,td{border:1px solid #dcdcdc;padding:14px 18px;text-align:center;font-size:16px;color:#222222} 
-th{background:#f1f5f9;color:#222222;font-size:17px;font-weight:600}
+th,td{border:1px solid #dcdcdc;padding:14px 18px;text-align:center;font-size:15px;color:#222222} 
+th{background:#f1f5f9;color:#222222;font-size:16px;font-weight:600}
 tbody tr:nth-child(even){background:#fafafa}
 tbody tr:hover{background:#f1f5f9}
 
-.pct-col {min-width:180px;width:200px}
+.pct-col {min-width:160px;width:180px}
 
 .table-pct-bar{width:100%;background:#f87171;border-radius:6px;position:relative;height:24px;overflow:hidden;border:1px solid #dcdcdc}
 .table-pct-fill{height:100%;background:#4ade80;width:0%}
@@ -48,36 +50,60 @@ tbody tr:hover{background:#f1f5f9}
 .rank1{background:rgba(245,158,11,0.1)!important}
 .excluded{opacity:0.5;background:#f3f4f6!important}
 tfoot tr{background:#e2e8f0;font-weight:700}
-tfoot td{border-top:2px solid #cbd5e1;font-size:17px}
+tfoot td{border-top:2px solid #cbd5e1;font-size:16px}
 
-.footer{text-align:center;margin-top:20px;color:#666666;font-size:15px;font-weight:500}
-.last-update{font-size:13px;color:#888888;margin-top:4px}
+.footer{text-align:center;margin-top:20px;color:#666666;font-size:14px;font-weight:500}
+.last-update{font-size:12px;color:#888888;margin-top:4px}
 .clickable, .student-name{color:#1d4ed8;cursor:pointer;text-decoration:underline;font-weight:600}
 .clickable:hover, .student-name:hover{color:#1e40af}
 
-.nav-btn-container{display:flex;gap:15px;margin:20px 0;justify-content:center}
-.btn-nav{background:#059669;color:#fff;border:none;padding:14px 28px;border-radius:12px;cursor:pointer;font-size:16px;font-weight:600;box-shadow:0 4px 10px rgba(5,150,105,0.15)}
+/* নেভিগেশন বাটন রেসপন্সিভ */
+.nav-btn-container{display:flex;flex-wrap:wrap;gap:15px;margin:20px 0;justify-content:center}
+.btn-nav{background:#059669;color:#fff;border:none;padding:14px 28px;border-radius:12px;cursor:pointer;font-size:15px;font-weight:600;box-shadow:0 4px 10px rgba(5,150,105,0.15);width:auto}
 .btn-nav:hover{background:#047857}
 
-.filter-row{display:flex;flex-wrap:wrap;gap:15px;margin-bottom:15px;background:#f8f9fa;padding:20px;border-radius:12px;border:1px solid #dcdcdc;align-items:center}
-.filter-group{display:flex;flex-direction:column;gap:5px}
+/* ফিল্টার রো রেসপন্সিভ */
+.filter-row{display:flex;flex-wrap:wrap;gap:15px;margin-bottom:15px;background:#f8f9fa;padding:20px;border-radius:12px;border:1px solid #dcdcdc;align-items:flex-end}
+.filter-group{display:flex;flex-direction:column;gap:5px;flex:1;min-width:200px}
 .filter-group label{font-size:14px;color:#444444;font-weight:500}
-.filter-select, .filter-input{background:#ffffff;color:#222222;border:1px solid #cccccc;padding:10px 14px;border-radius:8px;font-size:15px;outline:none}
+.filter-select, .filter-input{background:#ffffff;color:#222222;border:1px solid #cccccc;padding:10px 14px;border-radius:8px;font-size:15px;outline:none;width:100%}
 
-.btn-search{background:#2563eb;color:#fff;border:none;padding:11px 24px;border-radius:8px;cursor:pointer;font-weight:600;font-size:15px;margin-top:20px}
+.btn-search{background:#2563eb;color:#fff;border:none;padding:11px 24px;border-radius:8px;cursor:pointer;font-weight:600;font-size:15px;height:44px}
 .btn-search:hover{background:#1d4ed8}
 
-.modal{display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);overflow:auto}
-.modal-content{background:#ffffff;margin:3% auto;padding:30px;border-radius:16px;width:95%;max-width:1250px;max-height:90vh;overflow:auto;box-shadow:0 10px 30px rgba(0,0,0,0.15);border:1px solid #cbd5e1}
-.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid #e2e8f0}
-.modal-header h2{color:#222222;font-size:24px;font-weight:700}
-.close-btn{background:#ef4444;color:#fff;border:none;padding:8px 18px;border-radius:8px;cursor:pointer;font-size:15px;font-weight:600}
-.btn-group{display:flex;gap:10px;margin:15px 0}
-.btn{background:#2563eb;color:#fff;border:none;padding:10px 22px;border-radius:8px;cursor:pointer;font-size:15px;font-weight:500}
+/* মোডাল এবং প্রিন্ট লেআউট */
+.modal{display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);overflow:auto;padding:10px}
+.modal-content{background:#ffffff;margin:2% auto;padding:25px;border-radius:16px;width:100%;max-width:1250px;max-height:92vh;overflow:auto;box-shadow:0 10px 30px rgba(0,0,0,0.15);border:1px solid #cbd5e1}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid #e2e8f0;gap:10px}
+.modal-header h2{color:#222222;font-size:22px;font-weight:700}
+.close-btn{background:#ef4444;color:#fff;border:none;padding:8px 18px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;white-space:nowrap}
+.btn-group{display:flex;gap:10px;margin:15px 0;flex-wrap:wrap}
+.btn{background:#2563eb;color:#fff;border:none;padding:10px 22px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500}
 .btn-print{background:#f1f5f9;color:#222222;border:1px solid #cccccc}
 .sort-icons{display:inline-flex;flex-direction:column;margin-left:5px;vertical-align:middle}
 .sort-icons span{cursor:pointer;font-size:10px;line-height:8px;color:#888888}
 .sort-icons span:hover{color:#2563eb}
+
+/* মোবাইল মিডিয়া কোয়েরি (মোবাইলের জন্য বিশেষ স্টাইল) */
+@media (max-width: 768px) {
+body{padding:10px}
+.header{padding:16px;margin-bottom:15px}
+.header h1{font-size:24px}
+.header p{font-size:15px}
+.value{font-size:26px}
+#topPerformer{font-size:18px}
+.top-card h3{font-size:15px}
+.top-card{padding:20px}
+.btn-nav{width:100%;text-align:center;padding:12px 20px;font-size:14px}
+.filter-row{padding:15px;gap:12px}
+.filter-group{min-width:100%;flex:none}
+.btn-search{width:100%;margin-top:5px}
+.modal-content{margin:5% auto;padding:15px;max-height:95vh}
+.modal-header h2{font-size:18px}
+th,td{padding:10px 12px;font-size:14px}
+.table-wrap{padding:10px}
+.btn-print{margin-left:0 !important; width:100%}
+}
 
 @media print{
 *{color:#000!important;background:transparent!important;box-shadow:none!important}
@@ -85,7 +111,7 @@ tfoot td{border-top:2px solid #cbd5e1;font-size:17px}
 .modal{display:none!important}
 .modal.printing{display:block!important;position:static!important}
 .btn-group,.close-btn,.sort-icons,.filter-row{display:none!important}
-.modal-content{margin:0!important;width:100%!important;max-width:100%!important;padding:10px!important;max-height:none!important;border:none!important}
+.modal-content{margin:0!important;width:100!important;max-width:100%!important;padding:10px!important;max-height:none!important;border:none!important}
 body{background:#fff!important;padding:0!important}
 th,td{padding:6px 8px!important;font-size:13px!important;border:1px solid #000!important}
 }
@@ -179,7 +205,7 @@ th,td{padding:6px 8px!important;font-size:13px!important;border:1px solid #000!i
 <option value="All">All Months (Default)</option><option value="Jan">Jan</option><option value="Feb">Feb</option><option value="Mar">Mar</option><option value="Apr">Apr</option><option value="May">May</option><option value="Jun">Jun</option><option value="Jul">Jul</option><option value="Aug">Aug</option><option value="Sep">Sep</option><option value="Oct">Oct</option><option value="Nov">Nov</option><option value="Dec">Dec</option>
 </select>
 </div>
-<button class="btn btn-print" style="margin-top:20px; margin-left:auto" onclick="printModal('monthModal')"> 🖨 ️ Print</button>
+<button class="btn btn-print" onclick="printModal('monthModal')"> 🖨 ️ Print</button>
 </div>
 <div class="table-wrap">
 <h3>Month wise Tuition fees collection Status</h3><br>
@@ -200,7 +226,7 @@ th,td{padding:6px 8px!important;font-size:13px!important;border:1px solid #000!i
 <div class="filter-group"><label>Select Date (To)</label><input type="date" id="dateTo" class="filter-input"></div>
 <div class="filter-group"><label>Class & Shift</label><select id="dayClassSelect" class="filter-select"></select></div>
 <button class="btn-search" onclick="renderDayWiseData()">Search</button>
-<button class="btn btn-print" style="margin-top:20px; margin-left:auto" onclick="printModal('dayModal')"> 🖨 ️ Print</button>
+<button class="btn btn-print" onclick="printModal('dayModal')"> 🖨 ️ Print</button>
 </div>
 <div class="table-wrap">
 <h3>Days wise Tuition Fee collection status</h3><br>
