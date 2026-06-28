@@ -127,7 +127,7 @@ th,td{padding:6px 8px!important;font-size:13px!important;border:1px solid #000!i
 <th>Target</th>
 <th>Achievement</th>
 <th>Due</th>
-<th><th class="pct-col">% Achievement</th>
+<th class="pct-col">% Achievement</th>
 <th>Rank</th>
 </tr>
 </thead>
@@ -135,7 +135,6 @@ th,td{padding:6px 8px!important;font-size:13px!important;border:1px solid #000!i
 <tfoot id="tfoot"></tfoot>
 </table>
 </div>
-
 <div class="nav-btn-container">
 <button class="btn-nav" onclick="openMonthModal()"> 📅  Month wise Tuition fees collection Status</button>
 <button class="btn-nav" style="background:#2563eb; box-shadow:0 4px 10px rgba(37,99,235,0.15)" onclick="openDayModal()"> 📆  Days wise Tuition Fee collection</button>
@@ -229,13 +228,13 @@ th,td{padding:6px 8px!important;font-size:13px!important;border:1px solid #000!i
 </div>
 
 <div id="paymentModal" class="modal">
-<div class="modal-content" style="max-width: 700px;">
+<div class="modal-content">
 <div class="modal-header"><h2>Student Payment Received Information</h2><button class="close-btn" onclick="closePaymentModal()"> ✕  Close</button></div>
 <div style="margin-bottom:15px;padding:15px;background:#f8f9fa;border-radius:10px;border:1px solid #dcdcdc">
-<p style="font-size:18px; margin-bottom:5px;"><b>Name:</b> <span id="payStudentName" style="color:#2563eb;font-weight:600;"></span></p>
-<p style="font-size:18px;"><b>Roll:</b> <span id="payStudentRoll" style="color:#2563eb;font-weight:600;"></span></p>
+<p><b>Name:</b> <span id="payStudentName" style="color:#2563eb;font-weight:600;"></span></p>
+<p><b>Roll:</b> <span id="payStudentRoll" style="color:#2563eb;font-weight:600;"></span></p>
 </div>
-<div class="btn-group"><button class="btn btn-print" onclick="printModal('paymentModal')"> 🖨 ️ Print</button><button class="close-btn" style="background:#64748b;" onclick="closePaymentModal()">✕ Close</button></div>
+<div class="btn-group"><button class="btn btn-print" onclick="printModal('paymentModal')"> 🖨 ️ Print</button><button class="close-btn" onclick="closePaymentModal()">✕ Close</button></div>
 <div class="table-wrap">
 <table>
 <thead><tr><th>Date</th><th>Money Receipt No.</th><th>Amount</th></tr></thead>
@@ -255,6 +254,15 @@ let currentClassShift = '';
 let globalClassList = [];
 let lastSearchedFromDate = "";
 let lastSearchedToDate = "";
+
+function formatExcelDate(serialNumber) {
+  if (!serialNumber || isNaN(serialNumber)) return "-";
+  const dateObj = new Date((serialNumber - 25569) * 86400 * 1000);
+  const day = dateObj.getDate();
+  const month = dateObj.toLocaleString('en-US', { month: 'short' });
+  const year = String(dateObj.getFullYear()).substring(2);
+  return `${day}-${month}-${year}`;
+}
 
 async function loadData(){
 try{
@@ -353,28 +361,26 @@ mSelect.innerHTML = options;
 dSelect.innerHTML = options;
 }
 
-// ১ নম্বর নির্দেশনার ফিল্টারিং (Class & Shift-এর উপর ভিত্তি করে Roll, Name, Target, Received, Due জেনারেশন)
 function openClassDetails(classShift){
 currentClassShift = classShift;
 document.getElementById('modalClassTitle').innerText = `Class: ${classShift}`;
 document.getElementById('classModal').style.display = 'block';
 
-const studentMap = {};
+currentClassData = [];
 backendRawData.forEach(row => {
 if (row.classShiftA === classShift) {
 const roll = row.rollB;
 const name = row.nameD;
 if(!roll && !name) return;
-
-const key = roll + "_" + name;
-if(!studentMap[key]){
-studentMap[key] = { roll: roll, name: name, target: row.targetAF, received: row.achievementAG, due: 0 };
-}
+currentClassData.push({
+roll: roll,
+name: name,
+target: Number(row.targetAF) || 0,
+received: Number(row.achievementAG) || 0,
+due: (Number(row.targetAF) || 0) - (Number(row.achievementAG) || 0)
+});
 }
 });
-
-currentClassData = Object.values(studentMap);
-currentClassData.forEach(s => { s.due = s.target - s.received; });
 renderStudentTable();
 }
 
@@ -408,42 +414,6 @@ return order === 'asc'? valA - valB : valB - valA;
 renderStudentTable();
 }
 
-// ২ নম্বর নির্দেশনার ফিল্টারিং (Student Name-এ ক্লিক করলে Class & Shift + Roll দিয়ে AR কলাম সার্চ করবে)
-function openPaymentDetails(roll, name){
-document.getElementById('payStudentName').innerText = name;
-document.getElementById('payStudentRoll').innerText = roll;
-document.getElementById('paymentModal').style.display = 'block';
-
-const tbody = document.getElementById('paymentTbody');
-const tfoot = document.getElementById('paymentTfoot');
-tbody.innerHTML = '';
-
-let totalAmount = 0;
-const matchKey = currentClassShift + roll; // যেমন: VIB_1st7
-
-backendRawData.forEach(row => {
-if (row.searchKeyAR === matchKey) {
-totalAmount += row.receivedBE;
-let dateStr = "-";
-
-if(row.dateNumAQ){
-// গুগল শিটের সিরিয়াল নাম্বার ফরম্যাট থেকে JavaScript ডেটে কনভার্ট (যেমন: 46033 -> 14-Jun-26)
-const d = new Date((row.dateNumAQ - 25569) * 86400 * 1000);
-const day = d.getDate();
-const month = d.toLocaleString('en-us', { month: 'short' });
-const year = String(d.getFullYear()).substring(2);
-dateStr = `${day}-${month}-${year}`;
-}
-tbody.innerHTML += `<tr><td>${dateStr}</td><td>${row.receiptNoAP}</td><td>${row.receivedBE.toLocaleString()}</td></tr>`;
-}
-});
-
-tfoot.innerHTML = `<tr><td colspan="2">GRAND TOTAL</td><td>${totalAmount.toLocaleString()}</td></tr>`;
-}
-
-function closePaymentModal(){ document.getElementById('paymentModal').style.display = 'none'; }
-function closeClassModal(){ document.getElementById('classModal').style.display = 'none'; }
-
 function openMonthModal() { document.getElementById('monthModal').style.display = 'block'; renderMonthWiseData(); }
 function closeMonthModal() { document.getElementById('monthModal').style.display = 'none'; }
 function openDayModal() {
@@ -453,7 +423,7 @@ document.getElementById('dateTo').value = today;
 document.getElementById('dateFrom').value = today;
 renderDayWiseData();
 }
-function closeDayModal() { document.getElementById('dayModal').style.display = 'none'; }
+var closeDayModal = function() { document.getElementById('dayModal').style.display = 'none'; }
 
 function renderMonthWiseData(){
 const selectedClass = document.getElementById("monthClassSelect").value;
@@ -542,7 +512,6 @@ const toNum = type === 'date' ? new Date(lastSearchedToDate).getTime() + 8639999
 const targetMonth = type === 'month' ? document.getElementById("monthSelect").value.toLowerCase() : "";
 let grandTotalAmount = 0;
 let indexCounter = 1;
-
 backendRawData.forEach(row => {
 if (row.classShiftAO !== classShift) return;
 let match = false;
@@ -558,8 +527,8 @@ grandTotalAmount += row.receivedBE;
 tbody.innerHTML += `
 <tr>
 <td>${indexCounter++}</td>
-<td>${row.rollB || '-'}</td>
-<td>${row.nameD || '-'}</td>
+<td>${row.rollAT || '-'}</td>
+<td>${row.nameAS || '-'}</td>
 <td>${Number(row.receivedBE).toLocaleString()}</td>
 </tr>`;
 }
@@ -573,10 +542,34 @@ tfoot.innerHTML = `<tr><td colspan="3">GRAND TOTAL</td><td>${grandTotalAmount.to
 }
 
 function closeFilteredStudentModal() { document.getElementById('filteredStudentModal').style.display = 'none'; }
+function closeClassModal(){ document.getElementById('classModal').style.display = 'none'; }
+
+function openPaymentDetails(roll, name){
+document.getElementById('payStudentName').innerText = name;
+document.getElementById('payStudentRoll').innerText = roll;
+document.getElementById('paymentModal').style.display = 'block';
+
+const tbody = document.getElementById('paymentTbody');
+const tfoot = document.getElementById('paymentTfoot');
+tbody.innerHTML = '';
+
+let totalAmount = 0;
+const matchKey = currentClassShift + roll;
+
+backendRawData.forEach(row => {
+if (row.searchKeyAR === matchKey) {
+totalAmount += row.receivedBE;
+let dateStr = formatExcelDate(row.dateNumAQ);
+tbody.innerHTML += `<tr><td>${dateStr}</td><td>${row.receiptNoAP}</td><td>${row.receivedBE.toLocaleString()}</td></tr>`;
+}
+});
+tfoot.innerHTML = `<tr><td colspan="2">GRAND TOTAL</td><td>${totalAmount.toLocaleString()}</td></tr>`;
+}
+
+function closePaymentModal(){ document.getElementById('paymentModal').style.display = 'none'; }
 function printModal(modalId){ const modal = document.getElementById(modalId); modal.classList.add('printing'); window.print(); setTimeout(() => { modal.classList.remove('printing'); }, 500); }
 window.onclick = function(event) { if (event.target.classList.contains('modal')) { event.target.style.display = 'none'; } }
 
-// ইনিশিয়াল মাস্টার ডাটা সিনক্রোনাইজেশন কল
 loadData();
 </script>
 </body>
